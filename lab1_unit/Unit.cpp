@@ -32,3 +32,11 @@ int Unit::getHealth()
 {
 	return health;
 }
+bool Unit::addItemToBackpack(const Item& item)
+{
+return backpack.addItem(item);	
+}
+void Unit::showBackpack()
+{
+	backpack.displayItems();
+}
