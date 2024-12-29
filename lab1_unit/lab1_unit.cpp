@@ -1,37 +1,30 @@
-using namespace std;
-
-
 #include <iostream>
 #include "Unit.h"
+#include "Item.h"
+#include "Backpack.h"
+#include "Game.h"
 
+int main() {
+    Game game;
 
-int main()
-{
-    Unit warrior("warrior", 100, 20, 5, 0, 0, 2);
-    Unit archer("archer", 80, 15, 3, 1, 1, 3);
-    //lab2_backpack_test
-    Item sword("Sword", 15);
-    warrior.addItemToBackpack(sword);
-    cout<<"Warrior's backpack:"<<endl;
-    warrior.showBackpack();
+    auto warrior = make_shared<Warrior>(0, 0);
+    auto archer = make_shared<Archer>(1, 1);
 
-    warrior.move(1, 1);
-    cout << "warrior moved to new position!" << endl;
+    game.addUnit(warrior);
+    game.addUnit(archer);
 
-    warrior.attack(archer);
-    cout << "warrior attacked archer" << endl;
+    auto factory = make_shared<Factory>(5, 5);
+    game.addBuilding(factory);
 
-    if (!archer.isAlive())
-    {
-        cout << "archer has been defeated" << endl;
-    }
-    else
-    {
-        cout << "archer survived with " << archer.getHealth() << " health " << endl;
-    }
+    auto rock = make_shared<Obstacle>("Rock", 3, 3);
+    game.addObstacle(rock);
+
+    auto gold = make_shared<Resource>("Gold", 10, 10, 100);
+    game.addResource(gold);
+
+    game.start();
 
     return 0;
 }
-
 
 
