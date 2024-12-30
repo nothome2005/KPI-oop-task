@@ -3,28 +3,33 @@
 #include "Item.h"
 #include "Backpack.h"
 #include "Game.h"
+#include "Factory.h"
+
 
 int main() {
     Game game;
+    CommandManager commandManager;
 
-    auto warrior = make_shared<Warrior>(0, 0);
-    auto archer = make_shared<Archer>(1, 1);
+    // Фабрики для юнітів
+    WarriorFactory warriorFactory;
+    ArcherFactory archerFactory;
+
+    auto warrior = warriorFactory.createUnit(0, 0);
+    auto archer = archerFactory.createUnit(1, 1);
 
     game.addUnit(warrior);
     game.addUnit(archer);
 
-    auto factory = make_shared<Factory>(5, 5);
-    game.addBuilding(factory);
+    // Додавання дій
+    commandManager.addCommand(make_unique<MoveCommand>(warrior, 1, 1));
+    commandManager.addCommand(make_unique<AttackCommand>(warrior, archer));
 
-    auto rock = make_shared<Obstacle>("Rock", 3, 3);
-    game.addObstacle(rock);
-
-    auto gold = make_shared<Resource>("Gold", 10, 10, 100);
-    game.addResource(gold);
+    // Виконання команд
+    commandManager.executeCommands();
 
     game.start();
-
     return 0;
 }
+
 
 
