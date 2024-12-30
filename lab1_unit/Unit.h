@@ -1,19 +1,47 @@
 #pragma once
-#define UNIT_H
-using namespace std;
 #include <string>
+#include <iostream>
+#include <memory>
+#include "Backpack.h"
+#include "Item.h"
 
+using namespace std;
+
+
+
+class AttackStrategy {
+public:
+    virtual void attack(Unit& attacker, Unit& target) = 0;
+    virtual ~AttackStrategy() = default;
+};
+
+
+class MeleeAttack : public AttackStrategy {
+public:
+    void attack(Unit& attacker, Unit& target) override {
+        int damage = attacker.getAttackPower() - target.getDefense();
+        if (damage > 0) target.takeDamage(damage);
+    }
+};
+
+class RangedAttack : public AttackStrategy {
+public:
+    void attack(Unit& attacker, Unit& target) override {
+        int damage = (attacker.getAttackPower() * 1.2) - target.getDefense();
+        if (damage > 0) target.takeDamage(damage);
+    }
+};
 
 class Unit
 {
-private:
-	string name;
-	int health;
-	int attackPower;
-	int defense;
-	int posX, posY;
-	int speed;
-Backpack backpack;
+protected:
+    string name;
+    int health;
+    int attackPower;
+    int defense;
+    int posX, posY;
+    int speed;
+    Backpack backpack;
 
 public:
     Unit(string n, int hp, int ap, int def, int x, int y, int spd, int maxBackpackWeight)
@@ -21,6 +49,8 @@ public:
 
     virtual ~Unit() = default;
 
+    int getAttackPower() const { return attackPower; }
+    int getDefense() const { return defense; }
 
    virtual void move(int x, int y);
     virtual void attack(Unit& target);
@@ -35,6 +65,15 @@ public:
 
     int getX() const { return posX; } 
     int getY() const { return posY; } 
+    unique_ptr<AttackStrategy> attackStrategy;
+public:
+    void setAttackStrategy(unique_ptr<AttackStrategy> strategy) {
+        attackStrategy = move(strategy);
+    }
+    void performAttack(Unit& target) {
+        if (attackStrategy) attackStrategy->attack(*this, target);
+    }
+
 };
 class Warrior : public Unit {
 public:
@@ -57,4 +96,3 @@ public:
         attackPower += 10;
     }
 };
-
