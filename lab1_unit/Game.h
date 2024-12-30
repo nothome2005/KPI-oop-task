@@ -29,3 +29,47 @@ public:
     void computerTurnAction();
     bool isGameOver() const;
 };
+
+#include <queue>
+
+// Інтерфейс команди
+class Command {
+public:
+    virtual void execute() = 0;
+    virtual ~Command() = default;
+};
+
+// Команди
+class MoveCommand : public Command {
+    shared_ptr<Unit> unit;
+    int dx, dy;
+public:
+    MoveCommand(shared_ptr<Unit> u, int x, int y) : unit(u), dx(x), dy(y) {}
+    void execute() override {
+        unit->move(dx, dy);
+    }
+};
+
+class AttackCommand : public Command {
+    shared_ptr<Unit> attacker, target;
+public:
+    AttackCommand(shared_ptr<Unit> a, shared_ptr<Unit> t) : attacker(a), target(t) {}
+    void execute() override {
+        attacker->performAttack(*target);
+    }
+};
+
+// Менеджер команд
+class CommandManager {
+    queue<unique_ptr<Command>> commands;
+public:
+    void addCommand(unique_ptr<Command> command) {
+        commands.push(move(command));
+    }
+    void executeCommands() {
+        while (!commands.empty()) {
+            commands.front()->execute();
+            commands.pop();
+        }
+    }
+};
