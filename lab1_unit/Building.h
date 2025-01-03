@@ -17,11 +17,3 @@ public:
     string getName() const { return name; }
 };
 
-class Factory : public Building {
-public:
-    Factory(int x, int y) : Building("Factory", x, y) {}
-
-    void produceUnit() override {
-        cout << name << " produces a Warrior unit!" << endl;
-    }
-};
